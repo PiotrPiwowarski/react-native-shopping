@@ -14,6 +14,8 @@ import EditItem from './components/EditItem';
 
 const App = () => {
 
+  const BASE_URL = 'http://192.168.100.112:8080';
+
   const [usersCounter, setUsersCounter] = useState(3);
   const [itemsCounter, setItemsCounter] = useState(7);
   const [users, setUsers] = useState([
@@ -45,11 +47,11 @@ const App = () => {
           <HomeStack.Screen name="Home" component={Home} />
 
           <HomeStack.Screen name="Login">
-            {props => <Login {...props} users={users} setUsers={setUsers} />}
+            {props => <Login {...props} users={users} setUsers={setUsers}  />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="Registration" >
-            {props => <Registration {...props} users={users} setUsers={setUsers} usersCounter={usersCounter} setUsersCounter={setUsersCounter} />}
+            {props => <Registration {...props} users={users} setUsers={setUsers} usersCounter={usersCounter} setUsersCounter={setUsersCounter} baseUrl={BASE_URL} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="DisplayItems">

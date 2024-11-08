@@ -4,40 +4,50 @@ import BigButton from './BigButton';
 import Navbar from './Navbar';
 import Input from './Input';
 import Background from './Background';
+import axios from 'axios';
 
-const Registration = ({ navigation, users, setUsers, usersCounter, setUsersCounter }) => {
+const Registration = ({ navigation, users, setUsers, usersCounter, setUsersCounter, baseUrl }) => {
 
-  const [userLogin, setUserLogin] = useState('');
-  const [userPassword, setUserPassword] = useState('');
-  const [repeatedUserPassword, setRepeatedUserPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatedPassword, setRepeatedPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLoginInput = (input) => {
-    setUserLogin(input.trim());
+  const handleEmailInput = (input) => {
+    setEmail(input.trim());
   }
 
   const handlePasswordInput = (input) => {
-    setUserPassword(input.trim());
+    setPassword(input.trim());
   }
 
   const handleRepeatedPasswordInput = (input) => {
-    setRepeatedUserPassword(input.trim());
+    setRepeatedPassword(input.trim());
   }
 
-  const handleRegisterButton = () => {
-    if(userLogin === '' || userPassword === '' || repeatedUserPassword === '') {
+  const handleRegisterButton = async () => {
+    if(email === '' || password === '' || repeatedPassword === '') {
       setError('Wypełnij wszystkie pola formularza');
-    } else if(users.filter((user) => user.login === userLogin).length > 0) {
-      setError('Ta nazwa użytkownika jest zajęta');
-    } else if(userPassword.length < 4 ) {
+    }  else if(password.length < 4 ) {
       setError('Zbyt krótkie hasło');
-    } else if(userPassword !== repeatedUserPassword) {
+    } else if(password !== repeatedPassword) {
       setError('Powtórzone hasło się różni względem orginalnego');
     } else {
-      setUsers(prev => [...prev, {id: usersCounter, login: userLogin, password: userPassword}]);
-      setUsersCounter(prev => prev + 1);
-      setError('');
-      navigation.navigate('Login');
+      try {
+        setError('');
+        const response = await axios.post(`${baseUrl}/api/users/register`, {
+          email: email,
+          password: password,
+        });
+        if (response.status === 200) {
+          navigation.navigate('Login');
+        } else {
+          setError('Rejestracja nie powiodła się');
+        }
+      } catch (error) {
+        setError('Wystąpił błąd podczas rejestracji');
+        console.error(error);
+      }
     }
   }
 
@@ -57,7 +67,7 @@ const Registration = ({ navigation, users, setUsers, usersCounter, setUsersCount
 
             <Text style={styles.errorMessage}>{error}</Text>
 
-            <Input inputName='podaj login' changeTextHandler={handleLoginInput} numeric={false} password={false} />
+            <Input inputName='podaj login' changeTextHandler={handleEmailInput} numeric={false} password={false} />
 
             <Input inputName='podaj hasło' changeTextHandler={handlePasswordInput} numeric={false} password={true} />
 
