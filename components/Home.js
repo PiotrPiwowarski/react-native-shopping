@@ -1,6 +1,5 @@
 import React, {} from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
-import Navbar from './Navbar';
 import BigButton from './BigButton';
 import Background from './Background';
 

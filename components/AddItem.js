@@ -1,116 +1,87 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { KeyboardAvoidingView, Text, StyleSheet, ScrollView, Platform, View } from 'react-native';
 import Navbar from './Navbar';
 import Input from './Input';
 import BigButton from './BigButton';
 import Background from './Background';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddItem = ({ navigation, itemsCounter, setItemsCounter, setData, route, users, setUsers }) => {
-
-  const { user } = route.params;
-
+const AddItem = ({ navigation, baseUrl, user }) => {
   const [shop, setShop] = useState('');
-  const [product, setProduct] = useState('');
+  const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
+  const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
 
-  const changeShopHandler = (value) => {
-    setShop(value.trim());
-  }
-
-  const changeProductHandler = (value) => {
-    setProduct(value.trim());
-  }
-
+  const changeShopHandler = (value) => setShop(value.trim());
+  const changeProductNameHandler = (value) => setProductName(value.trim());
   const changePriceHandler = (value) => {
-    if(isNaN(value)) {
-      setError('Błędna liczba');
-    } else {
+    if (isNaN(value)) setError('Błędna liczba');
+    else {
       setError('');
-      setPrice(parseInt(value));
+      setPrice(parseFloat(value));
     }
-  }
+  };
+  const changeAmountHandler = (value) => {
+    if (isNaN(value)) setError('Błędna liczba');
+    else {
+      setError('');
+      setAmount(parseFloat(value));
+    }
+  };
+  const changeDescriptionHandler = (value) => setDescription(value);
+  const changeImageUrlHandler = (value) => setImageUrl(value);
 
-  const changeDescriptionHandler = (value) => {
-    setDescription(value.trim());
-  }
+  const handleLogoutButton = () => navigation.navigate('Home');
+  const handleReturnButton = () => navigation.navigate('DisplayItems', { user });
 
-  const changeImageUrlHandler = (value) => {
-    setImageUrl(value.trim());
-  }
-
-  const handleLogoutButton = () => {
-    const updatedUsers = users.map(iteratedUser => {
-      if(iteratedUser.login === user.login) {
-        iteratedUser.logged = false;
-      }
-      return iteratedUser;
-    });
-    setUsers(updatedUsers);
-    navigation.navigate('Home');
-  }
-
-  const handleReturnButton = () => {
-    navigation.navigate('DisplayItems', {user: user});
-  }
-
-  const addButtonHandler = () => {
-    if(error !== '') {
-      return;
-    } else if(shop === '' || product === '' || price === '') {
+  const addButtonHandler = async () => {
+    if (error !== '') return;
+    if (shop === '' || productName === '' || price === '') {
       setError('wypełnij wymagane pola formularza');
     } else {
-      setData(prev => (
-        [{id: itemsCounter, userId: user.id, shop: shop, product: product, price: price, description: description, imageUrl: imageUrl}, ...prev]
-      ))
-      setError('');
-      setItemsCounter(prev => (prev + 1));
-      navigation.navigate('DisplayItems', {user: user, users: users, setUsers: setUsers});
+      try {
+        const newItem = { shop, productName, price: price.toString(), amount: amount.toString(), description, imageUrl, userId: user.id };
+        const token = await AsyncStorage.getItem('jwtToken');
+        await axios.post(`${baseUrl}/api/items`, newItem, {headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'}});
+        navigation.navigate('DisplayItems', {user: user, baseUrl: baseUrl});
+      } catch (err) {
+        setError('Błąd dodawania przedmiotu.');
+        console.error(err);
+      }
     }
-  }
+  }; 
 
-  return  (
-    
-      <View style={{flex: 1}}>
-
-        <Background />
-
-        <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
-
-          <Navbar navigation={navigation} 
-            buttonsArray={[{key: 1, buttonName: 'wyloguj', onClickButton: handleLogoutButton}, 
-                          {key: 2, buttonName: 'wróć', onClickButton: handleReturnButton}
-          ]} />
-
-          <Text style={styles.errorMessage}>{error}</Text>
-
-          <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-
-            <View style={{alignItems: 'center'}}>
-
-              <Input inputName='podaj sklep:' changeTextHandler={changeShopHandler} numeric={false} password={false} />
-
-              <Input inputName='podaj produkt:' changeTextHandler={changeProductHandler} numeric={false} password={false} />
-
-              <Input inputName='podaj cenę:' changeTextHandler={changePriceHandler} numeric={true} password={false} />
-
-              <Input inputName='podaj opis (opcjonalnie):' changeTextHandler={changeDescriptionHandler} numeric={false} password={false} />
-
-              <Input inputName='podaj url obrazka (opcjonalnie):' changeTextHandler={changeImageUrlHandler} numeric={false} password={false} />
-
-              <BigButton innerText='dodaj' pressFunction={addButtonHandler} />
-
-            </View>
-                
-          </ScrollView>
-
-        </KeyboardAvoidingView>
-
-      </View>
+  return (
+    <View style={{ flex: 1 }}>
+      <Background />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <Navbar
+          navigation={navigation}
+          buttonsArray={[
+            { key: 1, buttonName: 'wyloguj', onClickButton: handleLogoutButton },
+            { key: 2, buttonName: 'wróć', onClickButton: handleReturnButton },
+          ]}
+        />
+        <Text style={styles.errorMessage}>{error}</Text>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+          <View style={{ alignItems: 'center' }}>
+            <Input inputName="podaj nazwę sklepu:" changeTextHandler={changeShopHandler} numeric={false} password={false} />
+            <Input inputName="podaj nazwę produktu:" changeTextHandler={changeProductNameHandler} numeric={false} password={false} />
+            <Input inputName="podaj cenę:" changeTextHandler={changePriceHandler} numeric={true} password={false} />
+            <Input inputName="podaj ilość:" changeTextHandler={changeAmountHandler} numeric={true} password={false} />
+            <Input inputName="podaj opis (opcjonalnie):" changeTextHandler={changeDescriptionHandler} numeric={false} password={false} />
+            <Input inputName="podaj url obrazka (opcjonalnie):" changeTextHandler={changeImageUrlHandler} numeric={false} password={false} />
+            <BigButton innerText="dodaj" pressFunction={addButtonHandler} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollViewContainer: {
@@ -123,8 +94,8 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 20,
     margin: 20,
-    fontWeight :'bold',
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default AddItem;

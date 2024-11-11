@@ -16,16 +16,7 @@ const App = () => {
 
   const BASE_URL = 'http://192.168.100.112:8080';
 
-  const [usersCounter, setUsersCounter] = useState(3);
-  const [itemsCounter, setItemsCounter] = useState(7);
-  const [users, setUsers] = useState([
-    {
-      id: 1, login: 'admin', password: 'admin', logged: false
-    },
-    {
-      id: 2, login: 'user', password: 'user', logged: false
-    }
-  ]);
+  const [user, setUser] = useState(null);
 
   const [data, setData] = useState([
     {id: 1, userId: 1, shop: 'Lidl', product: 'Masło', price: 12, description: 'Bardzo dobre masło', imageUrl: 'https://i.pinimg.com/564x/f3/ca/3b/f3ca3b91916db4604735a7406444dd9b.jpg'},
@@ -47,19 +38,19 @@ const App = () => {
           <HomeStack.Screen name="Home" component={Home} />
 
           <HomeStack.Screen name="Login">
-            {props => <Login {...props} users={users} setUsers={setUsers}  />}
+            {props => <Login {...props} baseUrl={BASE_URL} setUser={setUser} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="Registration" >
-            {props => <Registration {...props} users={users} setUsers={setUsers} usersCounter={usersCounter} setUsersCounter={setUsersCounter} baseUrl={BASE_URL} />}
+            {props => <Registration {...props} baseUrl={BASE_URL} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="DisplayItems">
-            {props => <DisplayItems {...props} data={data} setData={setData} users={users} setUsers={setUsers} />}
+            {props => <DisplayItems {...props} baseUrl={BASE_URL} user={user} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="AddItem">
-            {props => <AddItem {...props} itemsCounter={itemsCounter} setItemsCounter={setItemsCounter} data={data} setData={setData} users={users} setUsers={setUsers} />}
+            {props => <AddItem {...props} user={user} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="EditItem">

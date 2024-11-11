@@ -1,93 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableWithoutFeedback,  Text,  Keyboard, ScrollView, KeyboardAvoidingView, Platform, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+	StyleSheet,
+	Text,
+	ScrollView,
+	KeyboardAvoidingView,
+	Platform,
+	View,
+} from 'react-native';
 import BigButton from './BigButton';
 import Navbar from './Navbar';
 import Input from './Input';
 import Background from './Background';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = ({ navigation, users, setUsers }) => {
+const Login = ({ navigation, baseUrl, setUser }) => {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
 
-  const [userLogin, setUserLogin] = useState('');
-  const [userPassword, setUserPassword] = useState('');
-  const [error, setError] = useState('')
-
-  const handleLoginInput = (input) => {
-    setUserLogin(input.trim());
-  }
-
-  const handlePasswordInput = (input) => {
-    setUserPassword(input.trim());
-  }
-
-  const handleLoginButton = () => {
-    let loggedUser;
-    const usersArray = users.filter(iteratedUser => iteratedUser.login === userLogin);
-    if(userLogin === '' || userPassword === '') {
-      setError('wypełnij wszystkie pola formularza');
-    } else if(usersArray.length !== 1) {
-      setError('brak użytkowników o podanym loginie');
-    } else if(usersArray[0].password !== userPassword) {
-      setError('błędne hasło');
-    } else {
-      const updatedUsers = users.map(iteratedUser => {
-        if(iteratedUser.login === userLogin) {
-          iteratedUser.logged = true;
-          loggedUser = iteratedUser;
-        }
-        return iteratedUser;
-      });
-      setUsers(updatedUsers);
-      setError('');
-      navigation.navigate('DisplayItems', {user: loggedUser, users: users, setUsers: setUsers});
-      loggedUser = undefined;
+  const storeToken = async (token) => {
+    try {
+      await AsyncStorage.setItem('jwtToken', token);
+    } catch (error) {
+      console.error("Błąd zapisywania tokenu", error);
     }
-  }
+  };
 
-  return (
-    
-    <View style={{flex: 1}}>
+	const handleLoginInput = (input) => {
+		setEmail(input.trim());
+	};
 
-      <Background />
+	const handlePasswordInput = (input) => {
+		setPassword(input.trim());
+	};
 
-      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+	const handleLoginButton = async () => {
+		if (email === '' || password === '') {
+			setError('wypełnij wszystkie pola formularza');
+		} else {
+			try {
+				setError('');
+				const response = await axios.post(`${baseUrl}/api/users/login`, {
+					email: email,
+					password: password,
+				});
+				if (response.status === 200) {
+          const token = response.data.token;
+          setUser(response.data.user)
+					storeToken(token);
+					navigation.navigate('DisplayItems', {user: response.data.user});
+				} else {
+					setError('Błąd logowania');
+				}
+			} catch (error) {
+				setError('Wystąpił błąd podczas logowania');
+				console.error(error);
+			}
+		}
+	};
 
-        <Navbar navigation={navigation} buttonsArray={[ {key: 1,buttonName: 'wróć', onClickButton: () => navigation.navigate('Home')} ]} />
+	return (
+		<View style={{ flex: 1 }}>
+			<Background />
 
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+				<Navbar
+					navigation={navigation}
+					buttonsArray={[
+						{
+							key: 1,
+							buttonName: 'wróć',
+							onClickButton: () => navigation.navigate('Home'),
+						},
+					]}
+				/>
 
-          <View style={{alignItems: 'center'}}>
+				<ScrollView contentContainerStyle={styles.scrollViewContainer}>
+					<View style={{ alignItems: 'center' }}>
+						<Text style={styles.errorMessage}>{error}</Text>
 
-            <Text style={styles.errorMessage}>{error}</Text>
+						<Input
+							inputName='podaj email'
+							changeTextHandler={handleLoginInput}
+							numeric={false}
+							password={false}
+						/>
 
-            <Input inputName='podaj login' changeTextHandler={handleLoginInput} numeric={false} password={false} />
+						<Input
+							inputName='podaj hasło'
+							changeTextHandler={handlePasswordInput}
+							numeric={false}
+							password={true}
+						/>
 
-            <Input inputName='podaj hasło' changeTextHandler={handlePasswordInput} numeric={false} password={true} />
-
-            <BigButton innerText='zaloguj się' pressFunction={handleLoginButton} />
-
-          </View>
-
-        </ScrollView>
-        
-      </KeyboardAvoidingView>
-
-    </View>
-  );
-}
+						<BigButton
+							innerText='zaloguj się'
+							pressFunction={handleLoginButton}
+						/>
+					</View>
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</View>
+	);
+};
 
 const styles = StyleSheet.create({
-  scrollViewContainer: {
-    flexGrow: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  errorMessage: {
-    textAlign: 'center',
-    color: 'red',
-    fontSize: 20,
-    margin: 20,
-    fontWeight :'bold',
-  },
+	scrollViewContainer: {
+		flexGrow: 1,
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+	},
+	errorMessage: {
+		textAlign: 'center',
+		color: 'red',
+		fontSize: 20,
+		margin: 20,
+		fontWeight: 'bold',
+	},
 });
 
 export default Login;

@@ -9,7 +9,7 @@ import {
 import Input from './Input';
 
 const FilterBar = ({
-	setDisplayData,
+	setData,
 	data,
 	filterByShop,
 	setFilterByShop,
@@ -23,9 +23,9 @@ const FilterBar = ({
 	const handleShopButton = () => {
 		setFilterByShop((prev) => !prev);
 		if (!filterByShop) {
-			setDisplayData((prev) => prev.filter((o) => o.shop === shop));
+			setData(data.filter((o) => o.shop === shop));
 		} else {
-			setDisplayData(() => {
+			setData(() => {
 				if (!filterByPrice) {
 					return data;
 				} else {
@@ -38,19 +38,17 @@ const FilterBar = ({
 
 	const handleShopInput = (input) => {
 		setShop(input);
-		if (filterByPrice) {
-			setDisplayData((prev) => prev.filter((o) => o.shop === shop));
+		if (filterByShop) {
+			setData(data.filter((o) => o.shop === input));
 		}
 	};
 
 	const handlePriceButton = () => {
 		setFilterByPrice((prev) => !prev);
 		if (!filterByPrice) {
-			setDisplayData((prev) =>
-				prev.filter((o) => parseFloat(o.price) === parseFloat(price))
-			);
+			setData(data.filter((o) => parseFloat(o.price) === parseFloat(price)));
 		} else {
-			setDisplayData(() => {
+			setData(() => {
 				if (!filterByShop) {
 					return data;
 				} else {
@@ -64,9 +62,7 @@ const FilterBar = ({
 	const handlePriceInput = (input) => {
 		setPrice(input);
 		if (filterByPrice) {
-			setDisplayData((prev) =>
-				prev.filter((o) => parseFloat(o.price) === parseFloat(price))
-			);
+			setData(data.filter((o) => parseFloat(o.price) === parseFloat(input)));
 		}
 	};
 
@@ -84,7 +80,7 @@ const FilterBar = ({
 						inputName={'podaj sklep'}
 						numeric={false}
 						changeTextHandler={handleShopInput}
-						value={filterByShop && shop}
+						value={filterByShop ? shop : ''}
 					/>
 				</View>
 
@@ -99,7 +95,7 @@ const FilterBar = ({
 						inputName={'podaj cenę'}
 						numeric={true}
 						changeTextHandler={handlePriceInput}
-						value={filterByPrice && price}
+						value={filterByPrice ? price : ''}
 					/>
 				</View>
 			</ScrollView>

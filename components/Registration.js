@@ -6,7 +6,7 @@ import Input from './Input';
 import Background from './Background';
 import axios from 'axios';
 
-const Registration = ({ navigation, users, setUsers, usersCounter, setUsersCounter, baseUrl }) => {
+const Registration = ({ navigation, baseUrl }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,7 +67,7 @@ const Registration = ({ navigation, users, setUsers, usersCounter, setUsersCount
 
             <Text style={styles.errorMessage}>{error}</Text>
 
-            <Input inputName='podaj login' changeTextHandler={handleEmailInput} numeric={false} password={false} />
+            <Input inputName='podaj email' changeTextHandler={handleEmailInput} numeric={false} password={false} />
 
             <Input inputName='podaj hasło' changeTextHandler={handlePasswordInput} numeric={false} password={true} />
 
