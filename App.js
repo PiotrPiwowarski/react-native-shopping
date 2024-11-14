@@ -16,18 +16,6 @@ const App = () => {
 
   const BASE_URL = 'http://192.168.100.112:8080';
 
-  const [user, setUser] = useState(null);
-
-  const [data, setData] = useState([
-    {id: 1, userId: 1, shop: 'Lidl', product: 'Masło', price: 12, description: 'Bardzo dobre masło', imageUrl: 'https://i.pinimg.com/564x/f3/ca/3b/f3ca3b91916db4604735a7406444dd9b.jpg'},
-    {id: 2, userId: 1, shop: 'Lidl', product: 'Jabłka', price: 7, description: 'Świeże jabłka', imageUrl: 'https://i.pinimg.com/564x/ee/7a/93/ee7a937dded2fb7f4edaf7a48c592879.jpg'},
-    {id: 3, userId: 1, shop: 'Kaufland', product: 'Kabanosy', price: 20, description: 'Koniecznie tarczyńskiego', imageUrl: 'https://i.pinimg.com/564x/2c/18/10/2c18109cee3a0ef0785944d920ed87ba.jpg'},
-    {id: 4, userId: 2, shop: 'Lidl', product: 'Masło', price: 12, description: 'Bardzo dobre masło', imageUrl: 'https://i.pinimg.com/564x/f3/ca/3b/f3ca3b91916db4604735a7406444dd9b.jpg'},
-    {id: 5, userId: 2, shop: 'Lidl', product: 'Jabłka', price: 7, description: 'Świeże jabłka', imageUrl: 'https://i.pinimg.com/564x/ee/7a/93/ee7a937dded2fb7f4edaf7a48c592879.jpg'},
-    {id: 6, userId: 2, shop: 'Kaufland', product: 'Kabanosy', price: 20, description: 'Koniecznie tarczyńskiego', imageUrl: 'https://i.pinimg.com/564x/2c/18/10/2c18109cee3a0ef0785944d920ed87ba.jpg'}
-    
-  ]);
-
   const HomeStack = createStackNavigator();
 
   return (
@@ -38,7 +26,7 @@ const App = () => {
           <HomeStack.Screen name="Home" component={Home} />
 
           <HomeStack.Screen name="Login">
-            {props => <Login {...props} baseUrl={BASE_URL} setUser={setUser} />}
+            {props => <Login {...props} baseUrl={BASE_URL} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="Registration" >
@@ -46,19 +34,19 @@ const App = () => {
           </HomeStack.Screen>
 
           <HomeStack.Screen name="DisplayItems">
-            {props => <DisplayItems {...props} baseUrl={BASE_URL} user={user} />}
+            {props => <DisplayItems {...props} baseUrl={BASE_URL} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="AddItem">
-            {props => <AddItem {...props} user={user} />}
+            {props => <AddItem {...props} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="EditItem">
-            {props => <EditItem {...props} setData={setData} users={users} setUsers={setUsers} />}
+            {props => <EditItem {...props} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="ItemDetails" >
-            {props => <ItemDetails {...props} users={users} setUsers={setUsers} />}
+            {props => <ItemDetails {...props}  />}
           </ HomeStack.Screen>
 
         </HomeStack.Navigator>

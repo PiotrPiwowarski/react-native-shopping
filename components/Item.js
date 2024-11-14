@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import BigButton from './BigButton';
 
-const Item = ({ navigation, item, data, setData, user }) => {
+const Item = ({ navigation, item, itemsToDisplay, setItemsToDisplay, userId }) => {
 
   const [bought, setBought] = useState(false); 
 
@@ -18,7 +18,7 @@ const Item = ({ navigation, item, data, setData, user }) => {
 
   const handleBuyButton = () => {
     if(!bought) {
-      setData(prev => {
+      setItemsToDisplay(prev => {
         const thisItem = prev.filter(o => parseInt(o.id) === parseInt(item.id));
         const restItems = prev.filter(o => parseInt(o.id) !== parseInt(item.id));
         return [...restItems, ...thisItem];
@@ -28,7 +28,7 @@ const Item = ({ navigation, item, data, setData, user }) => {
   };
 
   const handleDetailsButton = () => {
-    navigation.navigate('ItemDetails', {item: item, user: user})
+    navigation.navigate('ItemDetails', {userId: userId})
   }
 
   return (

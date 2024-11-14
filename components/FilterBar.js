@@ -9,8 +9,8 @@ import {
 import Input from './Input';
 
 const FilterBar = ({
-	setData,
-	data,
+	setItemsToDisplay,
+	itemsToDisplay,
 	filterByShop,
 	setFilterByShop,
 	shop,
@@ -23,13 +23,13 @@ const FilterBar = ({
 	const handleShopButton = () => {
 		setFilterByShop((prev) => !prev);
 		if (!filterByShop) {
-			setData(data.filter((o) => o.shop === shop));
+			setItemsToDisplay(itemsToDisplay.filter((o) => o.shop === shop));
 		} else {
-			setData(() => {
+			setItemsToDisplay(() => {
 				if (!filterByPrice) {
-					return data;
+					return itemsToDisplay;
 				} else {
-					return data.filter((o) => parseFloat(o.price) === parseFloat(price));
+					return itemsToDisplay.filter((o) => parseFloat(o.price) === parseFloat(price));
 				}
 			});
 			setShop('');
@@ -39,20 +39,20 @@ const FilterBar = ({
 	const handleShopInput = (input) => {
 		setShop(input);
 		if (filterByShop) {
-			setData(data.filter((o) => o.shop === input));
+			setItemsToDisplay(itemsToDisplay.filter((o) => o.shop === input));
 		}
 	};
 
 	const handlePriceButton = () => {
 		setFilterByPrice((prev) => !prev);
 		if (!filterByPrice) {
-			setData(data.filter((o) => parseFloat(o.price) === parseFloat(price)));
+			setItemsToDisplay(itemsToDisplay.filter((o) => parseFloat(o.price) === parseFloat(price)));
 		} else {
-			setData(() => {
+			setItemsToDisplay(() => {
 				if (!filterByShop) {
-					return data;
+					return itemsToDisplay;
 				} else {
-					return data.filter((o) => o.shop === shop);
+					return itemsToDisplay.filter((o) => o.shop === shop);
 				}
 			});
 			setPrice(undefined);
@@ -62,7 +62,7 @@ const FilterBar = ({
 	const handlePriceInput = (input) => {
 		setPrice(input);
 		if (filterByPrice) {
-			setData(data.filter((o) => parseFloat(o.price) === parseFloat(input)));
+			setItemsToDisplay(itemsToDisplay.filter((o) => parseFloat(o.price) === parseFloat(input)));
 		}
 	};
 

@@ -7,7 +7,7 @@ import Background from './Background';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddItem = ({ navigation, baseUrl, user }) => {
+const AddItem = ({ navigation, baseUrl, userId }) => {
   const [shop, setShop] = useState('');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
@@ -46,7 +46,8 @@ const AddItem = ({ navigation, baseUrl, user }) => {
       try {
         const newItem = { shop, productName, price: price.toString(), amount: amount.toString(), description, imageUrl, userId: user.id };
         const token = await AsyncStorage.getItem('jwtToken');
-        await axios.post(`${baseUrl}/api/items`, newItem, {headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'}});
+        const response = await axios.get(`${baseUrl}/api/users/1`, {headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'}});
+        console.log(response);
         navigation.navigate('DisplayItems', {user: user, baseUrl: baseUrl});
       } catch (err) {
         setError('Błąd dodawania przedmiotu.');

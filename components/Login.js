@@ -14,20 +14,20 @@ import Background from './Background';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = ({ navigation, baseUrl, setUser }) => {
+const Login = ({ navigation, baseUrl }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 
-  const storeToken = async (token) => {
-    try {
-      await AsyncStorage.setItem('jwtToken', token);
-    } catch (error) {
-      console.error("Błąd zapisywania tokenu", error);
-    }
-  };
+	const storeToken = async (token) => {
+		try {
+			await AsyncStorage.setItem('jwtToken', token);
+		} catch (error) {
+			console.error('Błąd zapisywania tokenu', error);
+		}
+	};
 
-	const handleLoginInput = (input) => {
+	const handleEmailInput = (input) => {
 		setEmail(input.trim());
 	};
 
@@ -46,10 +46,10 @@ const Login = ({ navigation, baseUrl, setUser }) => {
 					password: password,
 				});
 				if (response.status === 200) {
-          const token = response.data.token;
-          setUser(response.data.user)
+					const token = response.data.token;
+					const userId = response.data.userId;
 					storeToken(token);
-					navigation.navigate('DisplayItems', {user: response.data.user});
+					navigation.navigate('DisplayItems', { userId: userId });
 				} else {
 					setError('Błąd logowania');
 				}
@@ -84,7 +84,7 @@ const Login = ({ navigation, baseUrl, setUser }) => {
 
 						<Input
 							inputName='podaj email'
-							changeTextHandler={handleLoginInput}
+							changeTextHandler={handleEmailInput}
 							numeric={false}
 							password={false}
 						/>
