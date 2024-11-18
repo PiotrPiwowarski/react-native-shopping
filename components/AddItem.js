@@ -7,7 +7,7 @@ import Background from './Background';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddItem = ({ navigation, baseUrl, userId }) => {
+const AddItem = ({ navigation, baseUrl, handleLogoutButton }) => {
   const [shop, setShop] = useState('');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
@@ -35,7 +35,6 @@ const AddItem = ({ navigation, baseUrl, userId }) => {
   const changeDescriptionHandler = (value) => setDescription(value);
   const changeImageUrlHandler = (value) => setImageUrl(value);
 
-  const handleLogoutButton = () => navigation.navigate('Home');
   const handleReturnButton = () => navigation.navigate('DisplayItems', { user });
 
   const addButtonHandler = async () => {

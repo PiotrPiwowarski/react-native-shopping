@@ -3,24 +3,12 @@ import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
 import Navbar from './Navbar';
 import Background from './Background';
 
-const ItemDetails = ({ navigation, route, users, setUsers }) => {
+const ItemDetails = ({ navigation, route, handleLogoutButton }) => {
 
-  const { item, user } = route.params;
-
-  const handleLogoutButton = () => {
-    const updatedUsers = users.map(iteratedUser => {
-      if(iteratedUser.login === user.login) {
-        iteratedUser.logged = false;
-      }
-      return iteratedUser;
-    });
-    setUsers(updatedUsers);
-    navigation.navigate('Home');
-  }
+  const { item, userId } = route.params;
 
   const handleReturnButton = () => {
-    console.log(user);
-    navigation.navigate('DisplayItems', {user: user});
+    navigation.navigate('DisplayItems', {userId: userId});
   }
 
   return (
@@ -43,7 +31,7 @@ const ItemDetails = ({ navigation, route, users, setUsers }) => {
 
           <Text style={styles.text}>sklep: {item.shop}</Text>
 
-          <Text style={styles.text}>produkt: {item.product}</Text>
+          <Text style={styles.text}>produkt: {item.productName}</Text>
 
           <Text style={styles.text}>cena: {item.price}</Text>
 

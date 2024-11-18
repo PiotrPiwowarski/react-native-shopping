@@ -7,8 +7,8 @@ import Background from './Background';
 import FilterBar from './FilterBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const DisplayItems = ({ navigation, baseUrl, route }) => {
-  const {userId} = route.params;
+const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
+  	const {userId} = route.params;
 	const [items, setItems] = useState([]);
 	const [itemsToDisplay, setItemsToDisplay] = useState([]);
 	const [showFilterBar, setShowFilterBar] = useState(false);
@@ -34,23 +34,6 @@ const DisplayItems = ({ navigation, baseUrl, route }) => {
 
 		fetchItems();
 	}, [userId, baseUrl]);
-
-	const handleLogoutButton = async () => {
-		try {
-			const token = await AsyncStorage.getItem('jwtToken');
-			await axios.post(
-				`${baseUrl}/users/logout`,
-				{},
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
-			await AsyncStorage.removeItem('jwtToken');
-			navigation.navigate('Home');
-		} catch (error) {
-			console.error('Błąd wylogowania', error);
-		}
-	};
 
 	const handleAddButton = () => {
 		navigation.navigate('AddItem', { userId: userId, baseUrl: baseUrl });
@@ -103,6 +86,8 @@ const DisplayItems = ({ navigation, baseUrl, route }) => {
 							item={item}
 							itemsToDisplay={itemsToDisplay}
 							setItemsToDisplay={setItemsToDisplay}
+							baseUrl={baseUrl}
+							setItems={setItems}
 						/>
 					)
 				}

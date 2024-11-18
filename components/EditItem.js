@@ -5,7 +5,7 @@ import Input from './Input';
 import BigButton from './BigButton';
 import Background from './Background';
 
-const EditItem = ({ navigation, setData, users, setUsers, route }) => {
+const EditItem = ({ navigation, setData, handleLogoutButton, route }) => {
 
   const { item, user } = route.params;
 
@@ -15,17 +15,6 @@ const EditItem = ({ navigation, setData, users, setUsers, route }) => {
   const [description, setDescription] = useState(item.description);
   const [imageUrl, setImageUrl] = useState(item.imageUrl);
   const [error, setError] = useState('');
-
-  const handleLogoutButton = () => {
-    const updatedUsers = users.map(iteratedUser => {
-      if(iteratedUser.login === user.login) {
-        iteratedUser.logged = false;
-      }
-      return iteratedUser;
-    });
-    setUsers(updatedUsers);
-    navigation.navigate('Home');
-  }
 
   const handleReturnButton = () => {
     navigation.navigate('DisplayItems', {user: user});

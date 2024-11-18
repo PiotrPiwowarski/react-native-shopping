@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import BigButton from './BigButton';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Item = ({ navigation, item, itemsToDisplay, setItemsToDisplay, userId }) => {
+const Item = ({ navigation, item, baseUrl, setItemsToDisplay, userId, setItems }) => {
 
   const [bought, setBought] = useState(false); 
 
-  const handleDeleteButton = () => {
-    setData(prev => (
-      prev.filter(o => parseInt(o.id) !== parseInt(item.id))
-    ))
+  const handleDeleteButton = async () => {
+    try {
+      const token = await AsyncStorage.getItem('jwtToken');
+
+      await axios.delete(`${baseUrl}/api/items/${item.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const response = await axios.get(`${baseUrl}/api/items/${parseInt(userId)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setItems(response.data);
+      setItemsToDisplay(response.data);
+    } catch (error) {
+      console.error(`Nie udało się usunąć produkut o id ${item.id}, spróbuj ponownie`, error);
+    }
   };  
 
   const handleEditButton = () => {
@@ -28,7 +42,7 @@ const Item = ({ navigation, item, itemsToDisplay, setItemsToDisplay, userId }) =
   };
 
   const handleDetailsButton = () => {
-    navigation.navigate('ItemDetails', {userId: userId})
+    navigation.navigate('ItemDetails', {userId: userId, item: item})
   }
 
   return (
@@ -40,9 +54,9 @@ const Item = ({ navigation, item, itemsToDisplay, setItemsToDisplay, userId }) =
 
         <Text style={styles.text}>sklep: {item.shop}</Text>
 
-        <Text style={styles.text}>produkt: {item.product}</Text>
+        <Text style={styles.text}>produkt: {item.productName}</Text>
       
-        <Text style={styles.text}>cena: {item.price}</Text>
+        <Text style={styles.text}>cena: {item.price} zł</Text>
 
       </View>
 
