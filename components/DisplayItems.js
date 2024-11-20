@@ -36,7 +36,7 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 	}, [userId, baseUrl]);
 
 	const handleAddButton = () => {
-		navigation.navigate('AddItem', { userId: userId, baseUrl: baseUrl });
+		navigation.navigate('AddItem', { userId: userId, setItemsToDisplay: setItemsToDisplay, setItems: setItems });
 	};
 
 	const handleFilterButton = () => {

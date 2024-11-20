@@ -7,7 +7,8 @@ import Background from './Background';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddItem = ({ navigation, baseUrl, handleLogoutButton }) => {
+const AddItem = ({ navigation, route, baseUrl, handleLogoutButton }) => {
+  const {userId, setItems, setItemsToDisplay} = route.params;
   const [shop, setShop] = useState('');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
@@ -19,35 +20,43 @@ const AddItem = ({ navigation, baseUrl, handleLogoutButton }) => {
   const changeShopHandler = (value) => setShop(value.trim());
   const changeProductNameHandler = (value) => setProductName(value.trim());
   const changePriceHandler = (value) => {
-    if (isNaN(value)) setError('Błędna liczba');
+    const parsedValue = parseFloat(value.replace(',', '.'));
+    if (isNaN(parsedValue)) setError('Błędna liczba');
     else {
       setError('');
-      setPrice(parseFloat(value));
+      setPrice(parsedValue);
     }
   };
   const changeAmountHandler = (value) => {
-    if (isNaN(value)) setError('Błędna liczba');
+    const parsedValue = parseFloat(value.replace(',', '.'));
+    if (isNaN(parsedValue)) setError('Błędna liczba');
     else {
       setError('');
-      setAmount(parseFloat(value));
+      setAmount(parsedValue);
     }
   };
   const changeDescriptionHandler = (value) => setDescription(value);
   const changeImageUrlHandler = (value) => setImageUrl(value);
 
-  const handleReturnButton = () => navigation.navigate('DisplayItems', { user });
+  const handleReturnButton = () => navigation.navigate('DisplayItems', { userId: userId });
 
   const addButtonHandler = async () => {
     if (error !== '') return;
     if (shop === '' || productName === '' || price === '') {
       setError('wypełnij wymagane pola formularza');
+      return;
     } else {
       try {
-        const newItem = { shop, productName, price: price.toString(), amount: amount.toString(), description, imageUrl, userId: user.id };
+        const newItem = { shop, productName, price: price.toString(), amount: amount.toString(), description, imageUrl, userId: userId };
         const token = await AsyncStorage.getItem('jwtToken');
-        const response = await axios.get(`${baseUrl}/api/users/1`, {headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'}});
-        console.log(response);
-        navigation.navigate('DisplayItems', {user: user, baseUrl: baseUrl});
+        console.log(baseUrl);
+        await axios.post(`${baseUrl}/api/items`, newItem, {headers: {'Authorization': `Bearer ${token}`}});
+        const response = await axios.get(`${baseUrl}/api/items/${parseInt(userId)}`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				setItems(response.data);
+				setItemsToDisplay(response.data);
+        navigation.navigate('DisplayItems', {userId: userId, baseUrl: baseUrl});
       } catch (err) {
         setError('Błąd dodawania przedmiotu.');
         console.error(err);
@@ -58,7 +67,7 @@ const AddItem = ({ navigation, baseUrl, handleLogoutButton }) => {
   return (
     <View style={{ flex: 1 }}>
       <Background />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
         <Navbar
           navigation={navigation}
           buttonsArray={[
