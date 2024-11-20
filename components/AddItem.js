@@ -49,7 +49,6 @@ const AddItem = ({ navigation, route, baseUrl, handleLogoutButton }) => {
       try {
         const newItem = { shop, productName, price: price.toString(), amount: amount.toString(), description, imageUrl, userId: userId };
         const token = await AsyncStorage.getItem('jwtToken');
-        console.log(baseUrl);
         await axios.post(`${baseUrl}/api/items`, newItem, {headers: {'Authorization': `Bearer ${token}`}});
         const response = await axios.get(`${baseUrl}/api/items/${parseInt(userId)}`, {
 					headers: { Authorization: `Bearer ${token}` },

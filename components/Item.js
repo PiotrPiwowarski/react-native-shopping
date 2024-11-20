@@ -4,8 +4,7 @@ import BigButton from './BigButton';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Item = ({ navigation, item, baseUrl, setItemsToDisplay, userId, setItems }) => {
-
+const Item = ({ navigation, item, baseUrl, setItemsToDisplay, itemsToDisplay, setItems, userId }) => {
   const [bought, setBought] = useState(false); 
 
   const handleDeleteButton = async () => {
@@ -27,7 +26,7 @@ const Item = ({ navigation, item, baseUrl, setItemsToDisplay, userId, setItems }
   };  
 
   const handleEditButton = () => {
-    navigation.navigate('EditItem', {item: item, user: user})
+    navigation.navigate('EditItem', {item, userId, userId, setItems, setItemsToDisplay})
   }
 
   const handleBuyButton = () => {
@@ -57,6 +56,8 @@ const Item = ({ navigation, item, baseUrl, setItemsToDisplay, userId, setItems }
         <Text style={styles.text}>produkt: {item.productName}</Text>
       
         <Text style={styles.text}>cena: {item.price} zł</Text>
+
+        <Text style={styles.text}>ilość: {item.amount}</Text>
 
       </View>
 

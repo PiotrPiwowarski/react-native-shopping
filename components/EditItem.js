@@ -4,36 +4,46 @@ import Navbar from './Navbar';
 import Input from './Input';
 import BigButton from './BigButton';
 import Background from './Background';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const EditItem = ({ navigation, setData, handleLogoutButton, route }) => {
-
-  const { item, user } = route.params;
-
+const EditItem = ({ navigation, route, handleLogoutButton, baseUrl }) => {
+  const {item, userId, setItems, setItemsToDisplay} = route.params;
   const [shop, setShop] = useState(item.shop);
-  const [product, setProduct] = useState(item.product);
+  const [productName, setProductName] = useState(item.productName);
   const [price, setPrice] = useState(item.price);
+  const [amount, setAmount] = useState(item.amount);
   const [description, setDescription] = useState(item.description);
   const [imageUrl, setImageUrl] = useState(item.imageUrl);
   const [error, setError] = useState('');
 
   const handleReturnButton = () => {
-    navigation.navigate('DisplayItems', {user: user});
+    navigation.navigate('DisplayItems', {userId: userId});
   }
 
   const changeShopHandler = (value) => {
     setShop(value.trim());
   }
 
-  const changeProductHandler = (value) => {
-    setProduct(value.trim());
+  const changeProductNameHandler = (value) => {
+    setProductName(value.trim());
   }
 
   const changePriceHandler = (value) => {
-    if(isNaN(value)) {
-      setError('Błędna liczba');
-    } else {
+    const parsedValue = parseFloat(value.replace(',', '.'));
+    if (isNaN(parsedValue)) setError('Błędna liczba');
+    else {
       setError('');
-      setPrice(parseInt(value));
+      setPrice(parsedValue);
+    }
+  }
+
+  const changeAmountHandler = (value) => {
+    const parsedValue = parseFloat(value.replace(',', '.'));
+    if (isNaN(parsedValue)) setError('Błędna liczba');
+    else {
+      setError('');
+      setAmount(parsedValue);
     }
   }
 
@@ -45,19 +55,26 @@ const EditItem = ({ navigation, setData, handleLogoutButton, route }) => {
     setImageUrl(inputState.trim());
   }
 
-  const updateButtonHandler = () => {
-    if(error !== '') {
+  const updateButtonHandler = async () => {
+    if (error !== '') return;
+    if (shop === '' || productName === '' || price === '') {
+      setError('wypełnij wymagane pola formularza');
       return;
-    } else if(shop === '' || product === '' || price === '') {
-      setError('Wypełnij wymagane pola formularza');
     } else {
-      setData(prev => {
-        const filteredItems = prev.filter(i => parseInt(i.id) !== parseInt(item.id));
-        const updatedItem = {id: item.id, userId: user.id, shop: shop, product: product, price: price, description: description, imageUrl: imageUrl};
-        return [updatedItem, ...filteredItems];
-      });
-      setError('');
-      navigation.navigate('DisplayItems', {user: user});
+      try {
+        const updatedItem = { id: item.id ,shop, productName, price: price.toString(), amount: amount.toString(), description, imageUrl, userId: userId };
+        const token = await AsyncStorage.getItem('jwtToken');
+        await axios.put(`${baseUrl}/api/items`, updatedItem, {headers: {'Authorization': `Bearer ${token}`}});
+        const response = await axios.get(`${baseUrl}/api/items/${parseInt(userId)}`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				setItems(response.data);
+				setItemsToDisplay(response.data);
+        navigation.navigate('DisplayItems', {userId: userId, baseUrl: baseUrl});
+      } catch (err) {
+        setError('Błąd dodawania przedmiotu.');
+        console.error(err);
+      }
     }
   }
 
@@ -82,9 +99,11 @@ const EditItem = ({ navigation, setData, handleLogoutButton, route }) => {
 
               <Input inputName='podaj sklep' value={shop} changeTextHandler={changeShopHandler} numeric={false} password={false} />
 
-              <Input inputName='podaj produkt' value={product} changeTextHandler={changeProductHandler} numeric={false} password={false} />
+              <Input inputName='podaj produkt' value={productName} changeTextHandler={changeProductNameHandler} numeric={false} password={false} />
 
-              <Input inputName='podaj cenę' value={price} changeTextHandler={changePriceHandler} numeric={true} password={false} />
+              <Input inputName='podaj cenę' value={String(price)} changeTextHandler={changePriceHandler} numeric={true} password={false} />
+
+              <Input inputName='podaj ilość' value={String(amount)} changeTextHandler={changeAmountHandler} numeric={true} password={false} />
 
               <Input inputName='podaj opis' value={description} changeTextHandler={changeDescriptionHandler} numeric={false} password={false} />
 

@@ -61,7 +61,7 @@ const App = () => {
           </HomeStack.Screen>
 
           <HomeStack.Screen name="EditItem">
-            {props => <EditItem {...props} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
+            {props => <EditItem {...props} baseUrl={BASE_URL} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="ItemDetails" >

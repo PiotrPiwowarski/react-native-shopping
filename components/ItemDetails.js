@@ -23,7 +23,7 @@ const ItemDetails = ({ navigation, route, handleLogoutButton }) => {
 
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
 
-        <Text style={[styles.text, {fontSize: 30}]}>szczegóły zakupu</Text>
+        <Text style={[styles.text, {fontSize: 30}]}>szczegóły produktu</Text>
 
         <View style={{alignItems: 'flex-start'}}>
 

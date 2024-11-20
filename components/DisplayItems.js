@@ -6,9 +6,10 @@ import Navbar from './Navbar';
 import Background from './Background';
 import FilterBar from './FilterBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BigButton from './BigButton';
 
 const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
-  	const {userId} = route.params;
+	const { userId } = route.params;
 	const [items, setItems] = useState([]);
 	const [itemsToDisplay, setItemsToDisplay] = useState([]);
 	const [showFilterBar, setShowFilterBar] = useState(false);
@@ -22,9 +23,12 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 		const fetchItems = async () => {
 			try {
 				const token = await AsyncStorage.getItem('jwtToken');
-				const response = await axios.get(`${baseUrl}/api/items/${parseInt(userId)}`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
+				const response = await axios.get(
+					`${baseUrl}/api/items/${parseInt(userId)}`,
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
 				setItems(response.data);
 				setItemsToDisplay(response.data);
 			} catch (error) {
@@ -36,11 +40,30 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 	}, [userId, baseUrl]);
 
 	const handleAddButton = () => {
-		navigation.navigate('AddItem', { userId: userId, setItemsToDisplay: setItemsToDisplay, setItems: setItems });
+		navigation.navigate('AddItem', {
+			userId: userId,
+			setItemsToDisplay: setItemsToDisplay,
+			setItems: setItems,
+		});
 	};
 
 	const handleFilterButton = () => {
 		setShowFilterBar((prev) => !prev);
+	};
+
+	const handleDeleteButton = async () => {
+		try {
+			const token = await AsyncStorage.getItem('jwtToken');
+			await axios.delete(
+				`${baseUrl}/api/users/${parseInt(userId)}`,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+			navigation.navigate('Home');
+		} catch (error) {
+			console.error('Błąd pobierania danych', error);
+		}
 	};
 
 	return (
@@ -92,6 +115,18 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 					)
 				}
 			/>
+
+			<View style={{ alignItems: 'center' }}>
+				<BigButton
+					innerText='usuń konto'
+					pressFunction={handleDeleteButton}
+					height={50}
+					width={100}
+					fontSize={17}
+					backgroundColor='red'
+					textColor='white'
+				/>
+			</View>
 		</View>
 	);
 };
