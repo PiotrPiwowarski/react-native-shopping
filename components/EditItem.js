@@ -101,9 +101,9 @@ const EditItem = ({ navigation, route, handleLogoutButton, baseUrl }) => {
 
               <Input inputName='podaj produkt' value={productName} changeTextHandler={changeProductNameHandler} numeric={false} password={false} />
 
-              <Input inputName='podaj cenę' value={String(price)} changeTextHandler={changePriceHandler} numeric={true} password={false} />
+              <Input inputName='podaj cenę' value={price} changeTextHandler={changePriceHandler} numeric={true} password={false} />
 
-              <Input inputName='podaj ilość' value={String(amount)} changeTextHandler={changeAmountHandler} numeric={true} password={false} />
+              <Input inputName='podaj ilość' value={amount} changeTextHandler={changeAmountHandler} numeric={true} password={false} />
 
               <Input inputName='podaj opis' value={description} changeTextHandler={changeDescriptionHandler} numeric={false} password={false} />
 

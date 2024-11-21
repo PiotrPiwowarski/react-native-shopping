@@ -10,6 +10,7 @@ import BigButton from './BigButton';
 
 const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 	const { userId } = route.params;
+	const [user, setUser] = useState('');
 	const [items, setItems] = useState([]);
 	const [itemsToDisplay, setItemsToDisplay] = useState([]);
 	const [showFilterBar, setShowFilterBar] = useState(false);
@@ -17,7 +18,7 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 	const [filterByShop, setFilterByShop] = useState(false);
 	const [shop, setShop] = useState('');
 	const [filterByPrice, setFilterByPrice] = useState(false);
-	const [price, setPrice] = useState(undefined);
+	const [price, setPrice] = useState('');
 
 	useEffect(() => {
 		const fetchItems = async () => {
@@ -29,6 +30,13 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 						headers: { Authorization: `Bearer ${token}` },
 					}
 				);
+				const response2 = await axios.get(
+					`${baseUrl}/api/users/${parseInt(userId)}`,
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
+				setUser(response2.data);
 				setItems(response.data);
 				setItemsToDisplay(response.data);
 			} catch (error) {
@@ -54,12 +62,9 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 	const handleDeleteButton = async () => {
 		try {
 			const token = await AsyncStorage.getItem('jwtToken');
-			await axios.delete(
-				`${baseUrl}/api/users/${parseInt(userId)}`,
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
+			await axios.delete(`${baseUrl}/api/users/${parseInt(userId)}`, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
 			navigation.navigate('Home');
 		} catch (error) {
 			console.error('Błąd pobierania danych', error);
@@ -81,8 +86,8 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 
 			{showFilterBar && (
 				<FilterBar
+					items={items}
 					setItemsToDisplay={setItemsToDisplay}
-					itemsToDisplay={itemsToDisplay}
 					filterByShop={filterByShop}
 					setFilterByShop={setFilterByShop}
 					shop={shop}
@@ -95,11 +100,11 @@ const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
 			)}
 
 			<View>
-				<Text style={styles.sectionHeader}> Cześć {userId}!</Text>
+				<Text style={styles.sectionHeader}> Cześć {user.email}!</Text>
 			</View>
 
 			<FlatList
-				data={items}
+				data={itemsToDisplay}
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={({ item }) =>
 					parseInt(item.userId) === parseInt(userId) && (
