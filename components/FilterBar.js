@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
 	View,
 	ScrollView,
@@ -20,83 +20,85 @@ const FilterBar = ({
 	price,
 	setPrice,
 }) => {
+
 	const handleShopButton = () => {
 		setFilterByShop((prev) => !prev);
+
 		if (!filterByShop) {
-			setItemsToDisplay(prev => items.filter((o) => o.shop === shop));
+			setItemsToDisplay(items.filter((o) => o.shop === shop));
 		} else {
-			setItemsToDisplay(prev => {
-				if (!filterByPrice) {
-					return items;
-				} else {
-					return items.filter((o) => parseFloat(o.price) === parseFloat(price));
-				}
-			});
+			setItemsToDisplay(
+				filterByPrice
+					? items.filter((o) =>
+							parseFloat(o.price) === parseFloat(price.replace(',', '.'))
+					  )
+					: items
+			);
 			setShop('');
 		}
 	};
 
 	const handleShopInput = (input) => {
 		setShop(input);
+
 		if (filterByShop) {
-			setItemsToDisplay(prev => items.filter((o) => o.shop === input));
+			setItemsToDisplay(items.filter((o) => o.shop === input));
 		}
 	};
 
 	const handlePriceButton = () => {
 		setFilterByPrice((prev) => !prev);
+
 		if (!filterByPrice) {
-			setItemsToDisplay(
-				prev => items.filter((o) => parseFloat(o.price) === parseFloat(price))
-			);
+			const priceValue = parseFloat(price.replace(',', '.'));
+			if (!isNaN(priceValue)) {
+				setItemsToDisplay(items.filter((o) => parseFloat(o.price) === priceValue));
+			}
 		} else {
-			setItemsToDisplay(prev => {
-				if (!filterByShop) {
-					return items;
-				} else {
-					return items.filter((o) => o.shop === shop);
-				}
-			});
+			setItemsToDisplay(
+				filterByShop
+					? items.filter((o) => o.shop === shop)
+					: items
+			);
 			setPrice('');
 		}
 	};
 
 	const handlePriceInput = (input) => {
 		setPrice(input);
+
 		if (filterByPrice) {
-			setItemsToDisplay(
-				prev => items.filter((o) => parseFloat(o.price) === parseFloat(input))
-			);
+			const priceValue = parseFloat(input.replace(',', '.'));
+			if (!isNaN(priceValue)) {
+				setItemsToDisplay(items.filter((o) => parseFloat(o.price) === priceValue));
+			}
 		}
 	};
 
 	return (
 		<View style={styles.container}>
 			<ScrollView>
-				<View style={{ flexDirection: 'row' }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<TouchableOpacity
 						style={styles.buttonContainer}
 						onPress={handleShopButton}>
-						<Text style={styles.buttonText}>{filterByShop && 'X'}</Text>
+						<Text style={styles.buttonText}>{filterByShop ? 'X' : ''}</Text>
 					</TouchableOpacity>
-
 					<Input
-						inputName={'podaj sklep'}
+						inputName={'Podaj sklep'}
 						numeric={false}
 						changeTextHandler={handleShopInput}
 						value={filterByShop ? shop : ''}
 					/>
 				</View>
-
-				<View style={{ flexDirection: 'row' }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<TouchableOpacity
 						style={styles.buttonContainer}
 						onPress={handlePriceButton}>
-						<Text style={styles.buttonText}>{filterByPrice && 'X'}</Text>
+						<Text style={styles.buttonText}>{filterByPrice ? 'X' : ''}</Text>
 					</TouchableOpacity>
-
 					<Input
-						inputName={'podaj cenę'}
+						inputName={'Podaj cenę'}
 						numeric={true}
 						changeTextHandler={handlePriceInput}
 						value={filterByPrice ? price : ''}
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		width: 50,
 		margin: 10,
-		marginRight: 60,
+		marginRight: 10,
 		borderRadius: 10,
 	},
 	buttonText: {
