@@ -25,7 +25,7 @@ const App = () => {
 		try {
 			const token = await AsyncStorage.getItem('jwtToken');
 			await axios.post(
-				`${BASE_URL}/api/users/logout`,
+				`${baseUrl}/api/users/logout`,
 				{},
 				{
 					headers: { Authorization: `Bearer ${token}` },
