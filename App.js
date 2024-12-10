@@ -13,10 +13,11 @@ import Login from './components/Login';
 import Registration from './components/Registration';
 import ItemDetails from './components/ItemDetails';
 import EditItem from './components/EditItem';
+import useStore from './components/useStore';
 
 const App = () => {
 
-  const BASE_URL = 'http://192.168.100.133:8080';
+  const baseUrl = useStore(state => state.baseUrl);
 
   const HomeStack = createStackNavigator();
 
@@ -45,23 +46,23 @@ const App = () => {
           <HomeStack.Screen name="Home" component={Home} />
 
           <HomeStack.Screen name="Login">
-            {props => <Login {...props} baseUrl={BASE_URL} />}
+            {props => <Login {...props} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="Registration" >
-            {props => <Registration {...props} baseUrl={BASE_URL} />}
+            {props => <Registration {...props} baseUrl={baseUrl} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="DisplayItems">
-            {props => <DisplayItems {...props} baseUrl={BASE_URL} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
+            {props => <DisplayItems {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="AddItem">
-            {props => <AddItem {...props} baseUrl={BASE_URL} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
+            {props => <AddItem {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="EditItem">
-            {props => <EditItem {...props} baseUrl={BASE_URL} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
+            {props => <EditItem {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="ItemDetails" >

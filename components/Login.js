@@ -13,11 +13,13 @@ import Input from './Input';
 import Background from './Background';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useStore from './useStore';
 
-const Login = ({ navigation, baseUrl }) => {
+const Login = ({ navigation }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
+	const baseUrl = useStore(state => state.baseUrl);
 
 	const storeToken = async (token) => {
 		try {
