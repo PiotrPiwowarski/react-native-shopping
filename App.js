@@ -16,7 +16,7 @@ import EditItem from './components/EditItem';
 
 const App = () => {
 
-  const BASE_URL = 'http://192.168.100.112:8080';
+  const BASE_URL = 'http://192.168.100.133:8080';
 
   const HomeStack = createStackNavigator();
 

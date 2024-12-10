@@ -41,6 +41,7 @@ const Login = ({ navigation, baseUrl }) => {
 		} else {
 			try {
 				setError('');
+				console.log(baseUrl);
 				const response = await axios.post(`${baseUrl}/api/users/login`, {
 					email: email,
 					password: password,
