@@ -38,6 +38,9 @@ const App = () => {
 		}
 	};
 
+  const [items, setItems] = useState([]);
+	const [itemsToDisplay, setItemsToDisplay] = useState([]);
+
   return (
 
     <NavigationContainer style={styles.container}>
@@ -54,11 +57,11 @@ const App = () => {
           </HomeStack.Screen>
 
           <HomeStack.Screen name="DisplayItems">
-            {props => <DisplayItems {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
+            {props => <DisplayItems {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} items={items} setItems={setItems} itemsToDisplay={itemsToDisplay} setItemsToDisplay={setItemsToDisplay}  />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="AddItem">
-            {props => <AddItem {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} />}
+            {props => <AddItem {...props} baseUrl={baseUrl} handleLogoutButton={() => handleLogoutButton(props.navigation)} setItems={setItems} setItemsToDisplay={setItemsToDisplay} />}
           </HomeStack.Screen>
 
           <HomeStack.Screen name="EditItem">

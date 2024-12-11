@@ -7,8 +7,8 @@ import Background from './Background';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddItem = ({ navigation, route, baseUrl, handleLogoutButton }) => {
-  const {userId, setItems, setItemsToDisplay} = route.params;
+const AddItem = ({ navigation, route, baseUrl, handleLogoutButton, setItems, setItemsToDisplay }) => {
+  const {userId} = route.params;
   const [shop, setShop] = useState('');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');

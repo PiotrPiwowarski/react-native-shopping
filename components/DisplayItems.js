@@ -8,11 +8,9 @@ import FilterBar from './FilterBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BigButton from './BigButton';
 
-const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton }) => {
+const DisplayItems = ({ navigation, baseUrl, route, handleLogoutButton, items, setItems, itemsToDisplay, setItemsToDisplay }) => {
 	const { userId } = route.params;
 	const [user, setUser] = useState('');
-	const [items, setItems] = useState([]);
-	const [itemsToDisplay, setItemsToDisplay] = useState([]);
 	const [showFilterBar, setShowFilterBar] = useState(false);
 
 	const [filterByShop, setFilterByShop] = useState(false);
